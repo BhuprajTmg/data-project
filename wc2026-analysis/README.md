@@ -21,6 +21,8 @@ wc2026-analysis/
 ├── src/
 │   ├── data_prep.py     # Loading, cleaning, feature engineering (single source of truth)
 │   └── stats_utils.py   # Descriptive stats, CI, one-/two-sample t-test helpers
+├── scripts/
+│   └── build_dataset.py # Reproducible merge script + raw source dumps used to build players_raw.csv
 ├── report/
 │   ├── PROJECT_PLAN.md  # Design rationale for every task and variable
 │   ├── REPORT.md        # Final write-up of methodology & findings

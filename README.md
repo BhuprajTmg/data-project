@@ -6,10 +6,12 @@ Statistical analysis and linear regression project on the 2026 FIFA World Cup
 See [`wc2026-analysis/`](wc2026-analysis/) for the full project: data, notebooks,
 source code, and the written report.
 
-Quick start:
+Quick start — one Python file, one HTML report:
 
 ```bash
 cd wc2026-analysis
 pip install -r requirements.txt
-jupyter notebook notebooks/
+python wc2026_analytics.py
 ```
+
+Open `wc2026-analysis/report/wc2026_report.html` in a browser.

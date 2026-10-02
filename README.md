@@ -8,4 +8,4 @@ Needs `fifa data.xlsx` in this folder (sheets: matches, teams, players). Writes 
 
 `WC2026_Presentation.pptx` (and `WC2026_3min.pptx`) — 6-slide final briefing with the report charts. Spoken script (~2.5 minutes) is in `PRESENTATION_SCRIPT.md` and in PowerPoint Presenter View.
 
-Saturday 3 Oct interview: study `INTERVIEW_PREP.md`, keep `INTERVIEW_CHEATSHEET.md` open during the viva.
+Saturday 3 Oct interview (Objective 1 only): study `INTERVIEW_PREP.md`, keep `INTERVIEW_CHEATSHEET.md` open during the viva.

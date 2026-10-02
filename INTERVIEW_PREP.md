@@ -2,7 +2,7 @@
 
 Saturday 3 Oct 2026, 12:00 pm · 20 minutes · all group members speak · marks after the interview
 
-Study **this file** tonight. Keep **`INTERVIEW_CHEATSHEET.md`** open during the call.
+Study **`INTERVIEW_THEORY.md`** if he is theory-heavy. Keep **`INTERVIEW_CHEATSHEET.md`** open during the call. This file is the four-task walkthrough.
 
 Assignment 2 is the four inferential tasks. Each task walks the same six skills: **question → wrangle → sample → describe → 95% CI → t-test**, at **α = 0.05**, **seed 42**. That is what they will examine. Do not study the regressions.
 

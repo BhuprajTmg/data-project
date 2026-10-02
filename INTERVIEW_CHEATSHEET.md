@@ -81,6 +81,31 @@ Welch (Levene 0.04) t(72.1)= **3.74** · **p=0.0004** · d= **0.84**
 
 ---
 
+## Theory traps (say these exactly)
+
+**p-value:** P(result this extreme or more **if H₀ is true**). Not P(H₀ is true). Not effect size.
+
+**95% CI:** if we repeated the sampling, 95% of such intervals would cover μ. This interval either contains μ or not — do not say “95% probability μ is inside.” Two-sided test at 5% rejects μ₀ iff μ₀ is outside the 95% CI (Task 4: 27 ∉ (28.74, 31.91)).
+
+**Fail to reject ≠ accept H₀.** Compatible with no difference; a small real gap could be missed (Type II). Type I = false reject, rate α = 0.05.
+
+**t not z:** σ unknown. t-test needs approx. normal **sampling distribution of the mean** (CLT), not normal raw data. Task 1 is right-skewed with median 0; n = 45 still OK for a mean.
+
+**Levene:** equal-variance check. p > 0.05 → pooled t. p < 0.05 → Welch (Task 4 df = 72.1).
+
+**One-sided only if the question is directional before seeing data** (Task 3). Two-sided p would still be ~0.008.
+
+**Significant ≠ important.** Report Cohen’s d. T1/T2 small d; T3 d = 1.08 large.
+
+**Not paired / not ANOVA / not chi-square:** two independent groups, numeric means.
+
+**Bonferroni if asked:** α = 0.05/4 = 0.0125. T3 p = 0.004 and T4 p = 0.0001 still reject.
+
+SE = s/√n (spread of the **mean**). SD = spread of **individuals**.  
+One-sample t = (x̄ − μ₀) / (s/√n).
+
+---
+
 ## If you freeze
 
 Say **decision + direction**, not a fake digit.  

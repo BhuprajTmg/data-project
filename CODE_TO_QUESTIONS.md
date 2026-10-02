@@ -1,157 +1,146 @@
-# Question → code map (say this in the viva)
+# How to explain the code in plain English
 
-File: `wc2026_analytics.py`. One script, three Excel sheets (`matches`, `teams`, `players`), four Objective 1 questions.
+One Python file (`wc2026_analytics.py`) reads one Excel workbook (`fifa data.xlsx`) with three sheets:
 
-**How to talk:** “Each task is one function. Shared helpers do the cleaning, the CI, and the t-test. `main()` runs them in order.”
+- **matches** — 104 games (used for attendance)
+- **teams** — 48 countries (used for squad value)
+- **players** — 1,016 players who actually played (used for yellow cards and age)
 
-```
-fifa data.xlsx
-   matches 104  →  load_matches()  →  task2_attendance()
-   teams    48  →  load_teams()    →  task3_value()
-   players 1016 →  load_players()  →  task1_discipline() + task4_age()
-                                              ↓
-                                    describe / ci_mean / t-test / Levene
-                                              ↓
-                                    HTML report (H₀, numbers, chart)
-```
+The file then answers **four questions**. Each question has its own short piece of code. At the end it writes the HTML report you submitted.
 
-Do not walk Objective 2 unless they ask. If they do: `build_goal_diff` / `build_team_goals` / `fit_ols` — skip for Assignment 2.
+If they ask you to walk through the program, say:
+
+> First we clean the three tables. Then we answer four questions, one after another. For each question we pick a random sample, describe it, build a 95% confidence interval, and run a t-test. Alpha is 0.05 and the random seed is 42, so anyone who reruns the file gets the same sample.
+
+Do not explain the regression part unless they ask. That is Objective 2.
 
 ---
 
-## Shared tools (every question uses these)
+## What happens before the four questions (cleaning)
 
-| If they ask | Function | What to say |
-|-------------|----------|-------------|
-| Seed / reproducibility | `SEED = 42` | Same sample every run. |
-| Cleaning names | `canon()` | USA, Turkiye, Ivory Coast… one spelling so tables join. |
-| Missing / types | `load_*` + `dropna()` inside helpers | Coerce numbers; dropna is a safety net on the test column. |
-| Sampling | `srs()` | SRS **without replacement**, seed 42. |
-| Describe | `describe()` | n, mean, median, SD, min/max, quartiles, skew. |
-| 95% CI | `ci_mean()` | x̄ ± t* × (s/√n). |
-| Two-sample t | `two_sample_ttest()` | scipy `ttest_ind`; Levene decides pooled vs Welch. |
-| One-sample t | `one_sample_ttest()` | Task 4 only, vs 27. |
-| Equal variance | `levene_p()` | `equal_var = (lev > 0.05)`. |
-| Decision | `verdict()` | Reject H₀ if p < 0.05, else fail to reject. |
+The loading functions tidy the Excel sheets so the tests are fair.
 
-**Levene line you must be able to point at:**
+- Country names are standardised. “United States” and “USA” become the same name, so a match row can join to a team row.
+- Numbers are forced to be numbers (age, cards, attendance, market value).
+- We only keep players who played at least once. Unused squad members are not in the study.
+- Yellow cards per appearance is calculated as yellows divided by games played. That way a player who featured in seven matches is not compared unfairly with someone who played once.
+- We check there really are 104 matches and 48 teams. If not, the script stops.
 
-`equal_var=lev > 0.05`  
-If Levene p > 0.05, variances look equal → pooled t. If not → Welch.
+**Missing values, in one sentence:** the things we actually tested — cards, attendance, squad value, and age — had no gaps. Blank “group” on knockout matches and blank “penalty winner” when there were no penalties are normal blanks, not holes we filled in.
 
 ---
 
-## Task 1 — `task1_discipline(players)`
+## Question 1 — yellow cards
 
-**Question:** Do midfielders pick up more yellow cards **per appearance** than defenders?
+**In English:** Do midfielders get booked more often, per game, than defenders?
 
-**H₀:** μ_MF = μ_DF  **H₁:** μ_MF ≠ μ_DF  two-sided
+**Null hypothesis:** on average, midfielders and defenders get the same number of yellows per appearance.  
+**Alternative:** the two averages are different. (We allowed either side to be higher.)
 
-**Sheet:** `players`
+**What the code does:**
 
-| Skill | Code | Say |
-|-------|------|-----|
-| Wrangle | `load_players`: keep appearances ≥ 1; `cards_per_app = yellows / appearances` | Rate, not totals, so a 7-match player is fair vs a substitute. |
-| Filter | keep position DF or MF | FW/GK out of this question. |
-| Sample | `srs(..., 45)` twice | n = 45 per group, seed 42. |
-| Describe | `describe(cards_per_app)` | Means 0.098 vs 0.131; median 0 (skew). |
-| CI | `ci_mean(mf["cards_per_app"])` | 95% CI for the MF mean. |
-| Test | Levene then two-sample t, default two-sided | p = 0.45 → fail to reject. |
-| Chart | two histograms | Shows the pile of zeros. |
+1. Keep only midfielders and defenders.
+2. Randomly pick 45 of each.
+3. Compare their yellows-per-game.
+4. First check whether the two groups are similarly spread out (Levene’s test). Then run a two-sample t-test.
+5. Also give a 95% confidence interval for the midfielder average.
+6. Draw two histograms.
 
-**Spoken:** *The question is a two-group mean comparison. The function samples 45 MF and 45 DF, checks variance with Levene, then runs a two-sample t on cards per appearance.*
+**What you found:** midfielders 0.098, defenders 0.131. p-value about 0.45. We **do not reject** the null. The “midfielders get booked more” story is not in this sample. Most players have zero yellows, which is why the median is 0 — we are still testing the *average* rate.
 
----
-
-## Task 2 — `task2_attendance(matches)`
-
-**Question:** Is mean attendance different in knockout vs group stage?
-
-**H₀:** μ_KO = μ_group  **H₁:** μ_KO ≠ μ_group  two-sided
-
-**Sheet:** `matches`
-
-| Skill | Code | Say |
-|-------|------|-----|
-| Wrangle | `load_matches`: `knockout = stage in KNOCKOUT_STAGES` | 72 group, 32 knockout. |
-| Sample | full `ko_pop.copy()` + SRS 32 of group | Stratified equal allocation; census of the small stratum. |
-| Describe | `describe(attendance)` | ~65,747 vs ~67,701. |
-| CI | `ci_mean` on the **combined** 64 matches | 95% CI for overall mean attendance. |
-| Test | Levene then two-sample t | p = 0.38 → fail to reject. |
-| Chart | box plot | Two stages side by side. |
-
-**Spoken:** *We did not sample knockout matches — there are only 32, so we used all of them, and sampled 32 group matches so the t-test is balanced.*
+**If they say “show me”:** the function is called `task1_discipline`.
 
 ---
 
-## Task 3 — `task3_value(teams)`
+## Question 2 — attendance
 
-**Question:** Do UEFA squads carry a **higher** market value than non-UEFA?
+**In English:** Were knockout matches fuller than group-stage matches?
 
-**H₀:** μ_UEFA = μ_non  **H₁:** μ_UEFA **>** μ_non  **one-sided**
+**Null hypothesis:** average crowd size is the same.  
+**Alternative:** the averages are different.
 
-**Sheet:** `teams`
+**What the code does:**
 
-| Skill | Code | Say |
-|-------|------|-----|
-| Wrangle | `is_uefa = (confederation == "UEFA")` | 16 vs 32. |
-| Sample | `n = min(14, ...)` then `.sample` | Equal n = 14 (just under UEFA census of 16). |
-| Describe | mean value EUR m | 670 vs 257. |
-| CI | `ci_mean` on UEFA sample | CI for the UEFA mean. |
-| Test | `alternative="greater"` | This is the only one-sided test. p = 0.004 → reject. |
-| Chart | box plot | UEFA vs rest. |
+1. Mark each match as group stage or knockout (Round of 32 through the Final).
+2. There are only 32 knockout games, so we use **all of them**.
+3. From the 72 group games we randomly pick 32, so both sides have the same sample size.
+4. Compare attendance with a two-sample t-test (after Levene).
+5. Give a 95% interval for overall mean attendance in that sample.
+6. Draw a box plot.
 
-**Spoken:** *`alternative="greater"` is why this p-value is one-sided. The question was directional before we saw the sample.*
+**What you found:** about 65,700 (group) vs 67,700 (knockout). p-value about 0.38. We **do not reject** the null. Roughly two thousand extra fans is not a statistically clear gap.
 
----
-
-## Task 4 — `task4_age(players)`
-
-**Question:** Is mean GK age different from **27**? Support: GK vs outfield.
-
-**H₀:** μ_GK = 27  **H₁:** μ_GK ≠ 27  two-sided one-sample  
-Support: μ_GK = μ_outfield
-
-**Sheet:** `players`
-
-| Skill | Code | Say |
-|-------|------|-----|
-| Wrangle | `position == "GK"` vs DF/MF/FW | 66 vs 950. |
-| Sample | `srs(..., 40)` each | n = 40. |
-| Describe | `describe(age)` | GK 30.3 vs OF 26.7. |
-| CI | `ci_mean(gk["age"])` | (28.74, 31.91) — 27 is outside. |
-| Primary test | `one_sample_ttest(..., popmean=27)` | t(39) = 4.25, p = 0.0001 → reject. |
-| Support | Levene then two-sample t | Levene p = 0.04 → Welch, df = 72.1. |
-| Chart | box plot + dashed line at 27 | The benchmark is visible. |
-
-**Spoken:** *Primary test is one-sample against a number, 27. The two-sample vs outfield does not depend on that benchmark.*
+**If they say “show me”:** the function is called `task2_attendance`.
 
 ---
 
-## Cleaning and missing — point here, not at the t-tests
+## Question 3 — squad market value
 
-`load_matches` / `load_teams` / `load_players`:
+**In English:** Are European (UEFA) squads worth more than the rest of the world?
 
-- `canon()` — name variants  
-- `to_numeric(..., errors="coerce")` — bad strings become NaN then dropna in helpers  
-- `appearances >= 1` — unused squad names out  
-- `fillna(0)` on yellows — real zeros, safety net  
-- `drop_duplicates("team")`  
-- `assert len(matches)==104` and `len(teams)==48` in `main()` — row-count error check  
+**Null hypothesis:** average squad value is the same.  
+**Alternative:** UEFA squads are **worth more** (only this direction — that is why this test is one-sided).
 
-Structural blanks (`group` on knockout matches, `penalty_winner` when no pens) are **not** used in these four functions.
+**What the code does:**
+
+1. Split the 48 teams into UEFA (16) and everyone else (32).
+2. Randomly pick 14 from each group.
+3. Compare Transfermarkt squad values with a one-sided t-test.
+4. Give a 95% interval for the UEFA average.
+5. Draw a box plot.
+
+**What you found:** about EUR 670 million vs 257 million. p-value about 0.004. We **reject** the null. UEFA squads were about two and a half times more valuable. This is also a *large* difference, not just a small p-value.
+
+**If they say “why one-sided?”:** because the question we wrote was “higher”, not “different”. We decided that before looking at the sample. Even a two-sided test would still have been significant.
+
+**If they say “show me”:** the function is called `task3_value`. Look for the line that says the test is “greater”.
 
 ---
 
-## `main()` — the story in four calls
+## Question 4 — goalkeeper age
 
-```
-load matches / teams / players
-task1_discipline(players)   ← yellows
-task2_attendance(matches)   ← crowds
-task3_value(teams)          ← UEFA value
-task4_age(players)          ← GK age
-write HTML
-```
+**In English:** Are goalkeepers who played at this World Cup older, on average, than 27?
 
-If they open the script, start at `main()`, then jump to the `task*_` function for the question they asked.
+**Null hypothesis:** mean goalkeeper age is 27.  
+**Alternative:** it is not 27.
+
+We also compared keepers with outfield players, as a check.
+
+**What the code does:**
+
+1. Separate goalkeepers from outfield players (defenders, midfielders, forwards).
+2. Randomly pick 40 of each.
+3. Run a one-sample t-test of keeper age against the number 27.
+4. Run a second t-test of keepers versus outfield players. Their ages were not equally spread out, so we used the version of the t-test that does not assume equal spread (Welch).
+5. Give a 95% interval for mean keeper age.
+6. Draw a box plot with a dashed line at 27.
+
+**What you found:** keepers averaged about 30.3 years. The interval is roughly 28.7 to 31.9, which does **not** include 27. p-value about 0.0001. We **reject** the null. They were also about 3.6 years older than outfield teammates.
+
+**If they say “why 27?”:** it is a common “prime age” for outfield players, not an official FIFA number. That is why we also compared keepers with actual outfield players.
+
+**If they say “show me”:** the function is called `task4_age`.
+
+---
+
+## Tiny glossary if they use the official words
+
+| Their word | Your plain sentence |
+|------------|---------------------|
+| Null hypothesis | The boring default: “no real difference” (or “mean age is 27”). |
+| Fail to reject | The sample is still compatible with that default. We did **not** prove the averages are equal. |
+| Reject | The sample is too extreme for the default to be believable. |
+| p-value | How often you would see a gap this big (or bigger) **if the null were true**. |
+| 95% CI | A range for the unknown average. If we sampled many times, about 95% of such ranges would cover the true average. |
+| t-test | The test we were asked to use to compare means when we do not know the population standard deviation. |
+| Levene | A check: are the two groups similarly spread out? That chooses which flavour of t-test we use. |
+| Seed 42 | The random draw is fixed so the marker can rerun it and get the same sample. |
+| Alpha 0.05 | We are willing to be wrong 5% of the time if we reject a true null. |
+
+---
+
+## One-minute tour of the whole file
+
+> The script loads three sheets and cleans names and types. Then four functions: yellow cards, attendance, UEFA value, keeper age. Each one samples, describes, builds a confidence interval, and runs a t-test. Two questions were not significant. UEFA value and keeper age were. Then it writes the HTML report.
+
+If they open the code, start at `main` at the bottom. It calls the four task functions in that order.

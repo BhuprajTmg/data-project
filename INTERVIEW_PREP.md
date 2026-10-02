@@ -69,6 +69,39 @@ Position counts: **DF 345, MF 319, FW 286, GK 66**.
 
 **Honest caveats (Objective 1):** Transfermarkt values and ages are point-in-time snapshots; they can move a few percent with the pull date. Rankings, scores, attendance, confederations, and titles are unambiguous.
 
+### Null hypotheses (yes — written in the report)
+
+| Task | H₀ | H₁ | Decision |
+|------|----|----|----------|
+| 1 | μ_MF = μ_DF | μ_MF ≠ μ_DF | Fail to reject |
+| 2 | μ_knockout = μ_group | μ_knockout ≠ μ_group | Fail to reject |
+| 3 | μ_UEFA = μ_non | μ_UEFA > μ_non | Reject |
+| 4 | μ_GK = 27 | μ_GK ≠ 27 | Reject |
+
+Levene also has a null: H₀: the two groups have equal variances.
+
+### Cleansing (yes — before any test)
+
+- **Compile-time:** players with no verifiable appearance dropped; accent/alias name matching; team-name variants mapped to one spelling (USA, Turkiye, Ivory Coast, Czechia, …).
+- **Load-time:** dates parsed; numbers `to_numeric(..., errors="coerce")`; booleans standardised; positions stripped and upper-cased; duplicate team rows dropped.
+- **Row filters:** keep `appearances ≥ 1`; Task 1 keeps only MF/DF; Task 4 splits GK vs DF/MF/FW.
+- **Derived (not imputed):** `cards_per_app`, `knockout` flag, UEFA flag.
+- **Error checks:** 294 goals + 14 OG = 308; 15 reds; every match/player team joins to teams; a fake Argentina–Spain group game was **excluded** (different groups).
+- Assists were too messy across sources, so they were **not used** in any Objective 1 test.
+
+### Missing values (yes, we looked — almost none on the test variables)
+
+The four t-test outcomes (**cards/app, attendance, squad value, age**) have **zero missing values** in the analysis tables.
+
+What *is* missing in `matches` is **structural**, not a hole we filled:
+
+- `group` is blank for **32 knockout** matches (they are not in a group of 4).
+- `penalty_winner` is blank for **100** matches that did not go to penalties (only 4 did).
+
+We did **not** impute those columns and we did **not** use them in Objective 1. The code’s `dropna()` / `fillna(0)` on yellows is a safety net; those fields were already complete (zeros are real zeros, not missing). We did **not** mean-impute attendance, age, or market value.
+
+*(If they ask about the whole project: first-match rest days in Objective 2 were filled with the median rest of 5 days. That is the only imputation, and it is not used in the four t-tests.)*
+
 **Derived fields used in the four tests**
 
 - `cards_per_app = yellow_cards / appearances` (Task 1)

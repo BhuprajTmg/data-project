@@ -21,6 +21,12 @@ Assignment 2 = **four inferential tasks**. Do not study the regressions. If they
 
 Pipeline: compile three tables → clean team names → derive cards/app, knockout flag, UEFA flag → **sample → describe → 95% CI → t-test**.
 
+**H₀:** T1 μ_MF=μ_DF · T2 μ_KO=μ_group · T3 μ_UEFA=μ_non (H₁ greater) · T4 μ_GK=27.
+
+**Cleansing:** name variants; types coerced; appearances ≥ 1; positions upper-cased; duplicate teams dropped; joins checked; 308 goals / 15 reds; fake ARG–ESP group match excluded.
+
+**Missing:** test variables (cards, attendance, value, age) have **0 NAs**. `group` blank on 32 knockout matches and `penalty_winner` blank on 100 non-penalty matches are **structural**, not imputed. Zeros for yellows/goals are real zeros. No mean-imputation on Obj1.
+
 ---
 
 ## Method (every task)

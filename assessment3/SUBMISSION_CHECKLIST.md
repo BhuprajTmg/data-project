@@ -5,13 +5,13 @@ One `.zip` on Learnline, **one submission per team**. Email is not accepted.
 ## Before you zip
 
 1. Open `HIT140_Assessment3_Group_Report.docx`.
-2. Type **all four names and student IDs** in the header line (Bhupraj Tamang is started; add the other three).
+2. Type **all four names and student IDs** into the table on page 1 (Bhupraj Tamang is started; add the other three).
 3. Keep it **one Word file, ≤ 4 pages, A4, single-spaced, 10 pt**. Do not add a contents page or a reference list.
 4. Put this URL in a `.txt` file (already in `github_link.txt`):
 
    https://github.com/BhuprajTmg/data-project
 
-   Make sure the GitHub repo is **visible to the marker** (public, or the lecturer has access) and contains `wc2026_analytics.py` plus `fifa data.xlsx`.
+   Make sure the GitHub repo is **visible to the marker** (public, or the lecturer has access) and contains `assignment3_final_code.py` plus `fifa data.xlsx`.
 5. Run the file through the **Turnitin** link on Learnline and save the originality report PDF.
 6. Fill the official **AI Usage Declaration Form v2.docx**. Use the wording in `AI_USAGE_DECLARATION_DRAFT.md`. **All four people sign.** Missing signatures = 5% per calendar day.
 

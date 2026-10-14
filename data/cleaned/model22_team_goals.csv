@@ -1,0 +1,209 @@
+match_id,team,opponent,goals,team_rank,team_value,rest_days,knockout,team_appearances,opp_appearances,is_uefa,days_into_tournament
+1,Mexico,South Africa,2,14,191.85,5.0,0,17,3,0,0
+1,South Africa,Mexico,0,60,49.25,5.0,0,3,17,0,0
+2,South Korea,Czechia,2,25,139.05,5.0,0,11,9,0,0
+2,Czechia,South Korea,1,40,188.18,5.0,0,9,11,1,0
+3,Canada,Bosnia and Herzegovina,1,30,198.65,5.0,0,2,1,0,1
+3,Bosnia and Herzegovina,Canada,1,64,146.4,5.0,0,1,2,1,1
+4,USA,Paraguay,4,17,385.6,5.0,0,11,8,0,1
+4,Paraguay,USA,1,41,153.65,5.0,0,8,11,0,1
+5,Haiti,Scotland,0,83,55.9,5.0,0,1,8,0,2
+5,Scotland,Haiti,1,42,170.25,5.0,0,8,1,1,2
+6,Australia,Turkiye,2,27,77.45,5.0,0,6,2,0,2
+6,Turkiye,Australia,0,22,473.7,5.0,0,2,6,1,2
+7,Brazil,Morocco,1,6,928.2,5.0,0,22,6,0,2
+7,Morocco,Brazil,1,7,447.7,5.0,0,6,22,0,2
+8,Qatar,Switzerland,1,56,19.93,5.0,0,1,12,0,2
+8,Switzerland,Qatar,1,19,332.5,5.0,0,12,1,1,2
+9,Ivory Coast,Ecuador,1,33,522.1,5.0,0,3,4,0,3
+9,Ecuador,Ivory Coast,0,23,368.7,5.0,0,4,3,0,3
+10,Germany,Curacao,7,10,947.0,5.0,0,20,0,1,3
+10,Curacao,Germany,1,82,25.78,5.0,0,0,20,0,3
+11,Netherlands,Japan,2,8,754.2,5.0,0,11,7,1,3
+11,Japan,Netherlands,2,18,270.85,5.0,0,7,11,0,3
+12,Sweden,Tunisia,5,38,406.08,5.0,0,12,6,1,3
+12,Tunisia,Sweden,1,45,69.95,5.0,0,6,12,0,3
+13,Saudi Arabia,Uruguay,1,61,40.68,5.0,0,6,14,0,4
+13,Uruguay,Saudi Arabia,1,16,359.3,5.0,0,14,6,0,4
+14,Spain,Cape Verde,0,2,1220.0,5.0,0,16,0,1,4
+14,Cape Verde,Spain,0,67,49.25,5.0,0,0,16,0,4
+15,Iran,New Zealand,2,20,32.05,5.0,0,6,2,0,4
+15,New Zealand,Iran,2,85,34.45,5.0,0,2,6,0,4
+16,Belgium,Egypt,1,9,547.5,5.0,0,14,3,1,4
+16,Egypt,Belgium,1,29,116.48,5.0,0,3,14,0,4
+17,France,Senegal,3,3,1520.0,5.0,0,16,3,1,5
+17,Senegal,France,1,15,478.1,5.0,0,3,16,0,5
+18,Iraq,Norway,1,57,21.2,5.0,0,1,3,0,5
+18,Norway,Iraq,4,31,589.9,5.0,0,3,1,1,5
+19,Argentina,Algeria,3,1,807.5,5.0,0,18,4,0,5
+19,Algeria,Argentina,0,28,256.9,5.0,0,4,18,0,5
+20,Austria,Jordan,3,24,245.2,5.0,0,7,0,1,5
+20,Jordan,Austria,1,63,20.3,5.0,0,0,7,0,5
+21,Ghana,Panama,1,73,234.5,5.0,0,4,1,0,6
+21,Panama,Ghana,0,34,34.55,5.0,0,1,4,0,6
+22,England,Croatia,4,4,1360.0,5.0,0,16,6,1,6
+22,Croatia,England,2,11,387.3,5.0,0,6,16,1,6
+23,Portugal,DR Congo,1,5,1010.0,5.0,0,8,1,1,6
+23,DR Congo,Portugal,1,46,143.9,5.0,0,1,8,0,6
+24,Uzbekistan,Colombia,1,50,85.33,5.0,0,0,6,0,6
+24,Colombia,Uzbekistan,3,13,302.35,5.0,0,6,0,0,6
+25,Czechia,South Africa,1,40,188.18,7.0,0,9,3,1,7
+25,South Africa,Czechia,1,60,49.25,7.0,0,3,9,0,7
+26,Switzerland,Bosnia and Herzegovina,4,19,332.5,5.0,0,12,1,1,7
+26,Bosnia and Herzegovina,Switzerland,1,64,146.4,6.0,0,1,12,1,7
+27,Canada,Qatar,6,30,198.65,6.0,0,2,1,0,7
+27,Qatar,Canada,0,56,19.93,5.0,0,1,2,0,7
+28,Mexico,South Korea,1,14,191.85,7.0,0,17,11,0,7
+28,South Korea,Mexico,0,25,139.05,7.0,0,11,17,0,7
+29,Brazil,Haiti,3,6,928.2,6.0,0,22,1,0,8
+29,Haiti,Brazil,0,83,55.9,6.0,0,1,22,0,8
+30,Scotland,Morocco,0,42,170.25,6.0,0,8,6,1,8
+30,Morocco,Scotland,1,7,447.7,6.0,0,6,8,0,8
+31,Turkiye,Paraguay,0,22,473.7,6.0,0,2,8,1,8
+31,Paraguay,Turkiye,1,41,153.65,7.0,0,8,2,0,8
+32,USA,Australia,2,17,385.6,7.0,0,11,6,0,8
+32,Australia,USA,0,27,77.45,6.0,0,6,11,0,8
+33,Germany,Ivory Coast,2,10,947.0,6.0,0,20,3,1,9
+33,Ivory Coast,Germany,1,33,522.1,6.0,0,3,20,0,9
+34,Ecuador,Curacao,0,23,368.7,6.0,0,4,0,0,9
+34,Curacao,Ecuador,0,82,25.78,6.0,0,0,4,0,9
+35,Netherlands,Sweden,5,8,754.2,6.0,0,11,12,1,9
+35,Sweden,Netherlands,1,38,406.08,6.0,0,12,11,1,9
+36,Tunisia,Japan,0,45,69.95,6.0,0,6,7,0,9
+36,Japan,Tunisia,4,18,270.85,6.0,0,7,6,0,9
+37,Uruguay,Cape Verde,2,16,359.3,6.0,0,14,0,0,10
+37,Cape Verde,Uruguay,2,67,49.25,6.0,0,0,14,0,10
+38,Spain,Saudi Arabia,4,2,1220.0,6.0,0,16,6,1,10
+38,Saudi Arabia,Spain,0,61,40.68,6.0,0,6,16,0,10
+39,Belgium,Iran,0,9,547.5,6.0,0,14,6,1,10
+39,Iran,Belgium,0,20,32.05,6.0,0,6,14,0,10
+40,New Zealand,Egypt,1,85,34.45,6.0,0,2,3,0,10
+40,Egypt,New Zealand,3,29,116.48,6.0,0,3,2,0,10
+41,Norway,Senegal,3,31,589.9,6.0,0,3,3,1,11
+41,Senegal,Norway,2,15,478.1,6.0,0,3,3,0,11
+42,France,Iraq,3,3,1520.0,6.0,0,16,1,1,11
+42,Iraq,France,0,57,21.2,6.0,0,1,16,0,11
+43,Argentina,Austria,2,1,807.5,6.0,0,18,7,0,11
+43,Austria,Argentina,0,24,245.2,6.0,0,7,18,1,11
+44,Jordan,Algeria,1,63,20.3,6.0,0,0,4,0,11
+44,Algeria,Jordan,2,28,256.9,6.0,0,4,0,0,11
+45,England,Ghana,0,4,1360.0,6.0,0,16,4,1,12
+45,Ghana,England,0,73,234.5,6.0,0,4,16,0,12
+46,Panama,Croatia,0,34,34.55,6.0,0,1,6,0,12
+46,Croatia,Panama,1,11,387.3,6.0,0,6,1,1,12
+47,Portugal,Uzbekistan,5,5,1010.0,6.0,0,8,0,1,12
+47,Uzbekistan,Portugal,0,50,85.33,6.0,0,0,8,0,12
+48,Colombia,DR Congo,1,13,302.35,6.0,0,6,1,0,12
+48,DR Congo,Colombia,0,46,143.9,6.0,0,1,6,0,12
+49,Scotland,Brazil,0,42,170.25,5.0,0,8,22,1,13
+49,Brazil,Scotland,3,6,928.2,5.0,0,22,8,0,13
+50,Morocco,Haiti,4,7,447.7,5.0,0,6,1,0,13
+50,Haiti,Morocco,2,83,55.9,5.0,0,1,6,0,13
+51,Switzerland,Canada,2,19,332.5,6.0,0,12,2,1,13
+51,Canada,Switzerland,1,30,198.65,6.0,0,2,12,0,13
+52,Bosnia and Herzegovina,Qatar,3,64,146.4,6.0,0,1,1,1,13
+52,Qatar,Bosnia and Herzegovina,1,56,19.93,6.0,0,1,1,0,13
+53,Czechia,Mexico,0,40,188.18,6.0,0,9,17,1,13
+53,Mexico,Czechia,3,14,191.85,6.0,0,17,9,0,13
+54,South Africa,South Korea,1,60,49.25,6.0,0,3,11,0,13
+54,South Korea,South Africa,0,25,139.05,6.0,0,11,3,0,13
+55,Curacao,Ivory Coast,0,82,25.78,5.0,0,0,3,0,14
+55,Ivory Coast,Curacao,2,33,522.1,5.0,0,3,0,0,14
+56,Ecuador,Germany,2,23,368.7,5.0,0,4,20,0,14
+56,Germany,Ecuador,1,10,947.0,5.0,0,20,4,1,14
+57,Japan,Sweden,1,18,270.85,5.0,0,7,12,0,14
+57,Sweden,Japan,1,38,406.08,5.0,0,12,7,1,14
+58,Tunisia,Netherlands,1,45,69.95,5.0,0,6,11,0,14
+58,Netherlands,Tunisia,3,8,754.2,5.0,0,11,6,1,14
+59,Turkiye,USA,3,22,473.7,6.0,0,2,11,1,14
+59,USA,Turkiye,2,17,385.6,6.0,0,11,2,0,14
+60,Paraguay,Australia,0,41,153.65,6.0,0,8,6,0,14
+60,Australia,Paraguay,0,27,77.45,6.0,0,6,8,0,14
+61,Norway,France,1,31,589.9,4.0,0,3,16,1,15
+61,France,Norway,4,3,1520.0,4.0,0,16,3,1,15
+62,Senegal,Iraq,5,15,478.1,4.0,0,3,1,0,15
+62,Iraq,Senegal,0,57,21.2,4.0,0,1,3,0,15
+63,Egypt,Iran,1,29,116.48,5.0,0,3,6,0,15
+63,Iran,Egypt,1,20,32.05,5.0,0,6,3,0,15
+64,New Zealand,Belgium,1,85,34.45,5.0,0,2,14,0,15
+64,Belgium,New Zealand,5,9,547.5,5.0,0,14,2,1,15
+65,Cape Verde,Saudi Arabia,0,67,49.25,5.0,0,0,6,0,15
+65,Saudi Arabia,Cape Verde,0,61,40.68,5.0,0,6,0,0,15
+66,Uruguay,Spain,0,16,359.3,5.0,0,14,16,0,15
+66,Spain,Uruguay,1,2,1220.0,5.0,0,16,14,1,15
+67,Panama,England,0,34,34.55,4.0,0,1,16,0,16
+67,England,Panama,2,4,1360.0,4.0,0,16,1,1,16
+68,Croatia,Ghana,2,11,387.3,4.0,0,6,4,1,16
+68,Ghana,Croatia,1,73,234.5,4.0,0,4,6,0,16
+69,Algeria,Austria,3,28,256.9,5.0,0,4,7,0,16
+69,Austria,Algeria,3,24,245.2,5.0,0,7,4,1,16
+70,Jordan,Argentina,1,63,20.3,5.0,0,0,18,0,16
+70,Argentina,Jordan,3,1,807.5,5.0,0,18,0,0,16
+71,Colombia,Portugal,0,13,302.35,4.0,0,6,8,0,16
+71,Portugal,Colombia,0,5,1010.0,4.0,0,8,6,1,16
+72,DR Congo,Uzbekistan,3,46,143.9,4.0,0,1,0,0,16
+72,Uzbekistan,DR Congo,1,50,85.33,4.0,0,0,1,0,16
+73,South Africa,Canada,0,60,49.25,4.0,1,3,2,0,17
+73,Canada,South Africa,1,30,198.65,4.0,1,2,3,0,17
+74,Germany,Paraguay,1,10,947.0,4.0,1,20,8,1,18
+74,Paraguay,Germany,1,41,153.65,4.0,1,8,20,0,18
+75,Netherlands,Morocco,1,8,754.2,4.0,1,11,6,1,18
+75,Morocco,Netherlands,1,7,447.7,5.0,1,6,11,0,18
+76,Brazil,Japan,2,6,928.2,5.0,1,22,7,0,18
+76,Japan,Brazil,1,18,270.85,4.0,1,7,22,0,18
+77,France,Sweden,3,3,1520.0,4.0,1,16,12,1,19
+77,Sweden,France,0,38,406.08,5.0,1,12,16,1,19
+78,Ivory Coast,Norway,1,33,522.1,5.0,1,3,3,0,19
+78,Norway,Ivory Coast,2,31,589.9,4.0,1,3,3,1,19
+79,Mexico,Ecuador,2,14,191.85,6.0,1,17,4,0,19
+79,Ecuador,Mexico,0,23,368.7,5.0,1,4,17,0,19
+80,England,DR Congo,2,4,1360.0,4.0,1,16,1,1,20
+80,DR Congo,England,1,46,143.9,4.0,1,1,16,0,20
+81,USA,Bosnia and Herzegovina,2,17,385.6,6.0,1,11,1,0,20
+81,Bosnia and Herzegovina,USA,0,64,146.4,7.0,1,1,11,1,20
+82,Belgium,Senegal,3,9,547.5,5.0,1,14,3,1,20
+82,Senegal,Belgium,2,15,478.1,5.0,1,3,14,0,20
+83,Portugal,Croatia,2,5,1010.0,5.0,1,8,6,1,21
+83,Croatia,Portugal,1,11,387.3,5.0,1,6,8,1,21
+84,Spain,Austria,3,2,1220.0,6.0,1,16,7,1,21
+84,Austria,Spain,0,24,245.2,5.0,1,7,16,1,21
+85,Switzerland,Algeria,2,19,332.5,8.0,1,12,4,1,21
+85,Algeria,Switzerland,0,28,256.9,5.0,1,4,12,0,21
+86,Argentina,Cape Verde,3,1,807.5,6.0,1,18,0,0,22
+86,Cape Verde,Argentina,2,67,49.25,7.0,1,0,18,0,22
+87,Colombia,Ghana,1,13,302.35,6.0,1,6,4,0,22
+87,Ghana,Colombia,0,73,234.5,6.0,1,4,6,0,22
+88,Australia,Egypt,1,27,77.45,8.0,1,6,3,0,22
+88,Egypt,Australia,1,29,116.48,7.0,1,3,6,0,22
+89,Paraguay,France,0,41,153.65,5.0,1,8,16,0,23
+89,France,Paraguay,1,3,1520.0,4.0,1,16,8,1,23
+90,Canada,Morocco,0,30,198.65,6.0,1,2,6,0,23
+90,Morocco,Canada,3,7,447.7,5.0,1,6,2,0,23
+91,Brazil,Norway,1,6,928.2,6.0,1,22,3,0,24
+91,Norway,Brazil,2,31,589.9,5.0,1,3,22,1,24
+92,Mexico,England,2,14,191.85,5.0,1,17,16,0,24
+92,England,Mexico,3,4,1360.0,4.0,1,16,17,1,24
+93,Portugal,Spain,0,5,1010.0,4.0,1,8,16,1,25
+93,Spain,Portugal,1,2,1220.0,4.0,1,16,8,1,25
+94,USA,Belgium,1,17,385.6,5.0,1,11,14,0,25
+94,Belgium,USA,4,9,547.5,5.0,1,14,11,1,25
+95,Argentina,Egypt,3,1,807.5,4.0,1,18,3,0,26
+95,Egypt,Argentina,2,29,116.48,4.0,1,3,18,0,26
+96,Switzerland,Colombia,0,19,332.5,5.0,1,12,6,1,26
+96,Colombia,Switzerland,0,13,302.35,4.0,1,6,12,0,26
+97,France,Morocco,2,3,1520.0,5.0,1,16,6,1,28
+97,Morocco,France,0,7,447.7,5.0,1,6,16,0,28
+98,Spain,Belgium,2,2,1220.0,4.0,1,16,14,1,29
+98,Belgium,Spain,1,9,547.5,4.0,1,14,16,1,29
+99,Norway,England,1,31,589.9,6.0,1,3,16,1,30
+99,England,Norway,2,4,1360.0,6.0,1,16,3,1,30
+100,Argentina,Switzerland,3,1,807.5,4.0,1,18,12,0,30
+100,Switzerland,Argentina,1,19,332.5,4.0,1,12,18,1,30
+101,France,Spain,0,3,1520.0,5.0,1,16,16,1,33
+101,Spain,France,2,2,1220.0,4.0,1,16,16,1,33
+102,England,Argentina,1,4,1360.0,4.0,1,16,18,1,34
+102,Argentina,England,2,1,807.5,4.0,1,18,16,0,34
+103,France,England,4,3,1520.0,4.0,1,16,16,1,37
+103,England,France,6,4,1360.0,3.0,1,16,16,1,37
+104,Spain,Argentina,1,2,1220.0,5.0,1,16,18,1,38
+104,Argentina,Spain,0,1,807.5,4.0,1,18,16,0,38

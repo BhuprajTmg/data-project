@@ -1,3 +1,5 @@
+**Word report (download this):** `HIT140_Assessment3_Group_Report.docx`
+
 # HIT140 Assessment 3 — Objective 2
 
 All analysis is **Python**. The group report and figures are **HTML + CSS**.

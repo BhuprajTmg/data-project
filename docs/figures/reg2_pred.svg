@@ -1,0 +1,65 @@
+<svg class="chart-svg" viewBox="0 0 420 420" role="img" aria-label="Figure 2. Model 2.2 test set">
+<text class="chart-title" x="210.0" y="22">Figure 2. Model 2.2 test set</text>
+<rect class="chart-panel" x="58" y="36" width="344" height="336"/>
+<line class="chart-diag" x1="58.0" y1="372.0" x2="402.0" y2="36.0"/>
+<line class="chart-grid" x1="125.1" y1="36" x2="125.1" y2="372"/>
+<line class="chart-grid" x1="58" y1="306.4" x2="402" y2="306.4"/>
+<text class="chart-tick" x="125.1" y="392">1</text>
+<text class="chart-tick chart-tick-y" x="50" y="306.4">1</text>
+<line class="chart-grid" x1="209.0" y1="36" x2="209.0" y2="372"/>
+<line class="chart-grid" x1="58" y1="224.5" x2="402" y2="224.5"/>
+<text class="chart-tick" x="209.0" y="392">3</text>
+<text class="chart-tick chart-tick-y" x="50" y="224.5">3</text>
+<line class="chart-grid" x1="292.9" y1="36" x2="292.9" y2="372"/>
+<line class="chart-grid" x1="58" y1="142.5" x2="402" y2="142.5"/>
+<text class="chart-tick" x="292.9" y="392">5</text>
+<text class="chart-tick chart-tick-y" x="50" y="142.5">5</text>
+<line class="chart-grid" x1="376.8" y1="36" x2="376.8" y2="372"/>
+<line class="chart-grid" x1="58" y1="60.6" x2="402" y2="60.6"/>
+<text class="chart-tick" x="376.8" y="392">7</text>
+<text class="chart-tick chart-tick-y" x="50" y="60.6">7</text>
+<circle class="chart-point" cx="83.2" cy="294.2" r="5"/>
+<circle class="chart-point" cx="125.1" cy="246.8" r="5"/>
+<circle class="chart-point" cx="167.1" cy="327.5" r="5"/>
+<circle class="chart-point" cx="83.2" cy="309.5" r="5"/>
+<circle class="chart-point" cx="209.0" cy="249.2" r="5"/>
+<circle class="chart-point" cx="125.1" cy="255.8" r="5"/>
+<circle class="chart-point" cx="167.1" cy="246.8" r="5"/>
+<circle class="chart-point" cx="125.1" cy="295.6" r="5"/>
+<circle class="chart-point" cx="376.8" cy="225.7" r="5"/>
+<circle class="chart-point" cx="125.1" cy="258.6" r="5"/>
+<circle class="chart-point" cx="167.1" cy="335.4" r="5"/>
+<circle class="chart-point" cx="125.1" cy="247.1" r="5"/>
+<circle class="chart-point" cx="167.1" cy="268.4" r="5"/>
+<circle class="chart-point" cx="125.1" cy="244.8" r="5"/>
+<circle class="chart-point" cx="125.1" cy="283.2" r="5"/>
+<circle class="chart-point" cx="167.1" cy="236.3" r="5"/>
+<circle class="chart-point" cx="167.1" cy="264.7" r="5"/>
+<circle class="chart-point" cx="83.2" cy="254.4" r="5"/>
+<circle class="chart-point" cx="167.1" cy="267.7" r="5"/>
+<circle class="chart-point" cx="83.2" cy="319.3" r="5"/>
+<circle class="chart-point" cx="125.1" cy="298.1" r="5"/>
+<circle class="chart-point" cx="209.0" cy="246.3" r="5"/>
+<circle class="chart-point" cx="83.2" cy="293.8" r="5"/>
+<circle class="chart-point" cx="125.1" cy="316.9" r="5"/>
+<circle class="chart-point" cx="125.1" cy="271.9" r="5"/>
+<circle class="chart-point" cx="125.1" cy="275.8" r="5"/>
+<circle class="chart-point" cx="83.2" cy="303.3" r="5"/>
+<circle class="chart-point" cx="125.1" cy="295.6" r="5"/>
+<circle class="chart-point" cx="83.2" cy="265.9" r="5"/>
+<circle class="chart-point" cx="125.1" cy="250.9" r="5"/>
+<circle class="chart-point" cx="125.1" cy="289.1" r="5"/>
+<circle class="chart-point" cx="292.9" cy="276.8" r="5"/>
+<circle class="chart-point" cx="83.2" cy="281.2" r="5"/>
+<circle class="chart-point" cx="125.1" cy="304.3" r="5"/>
+<circle class="chart-point" cx="125.1" cy="323.6" r="5"/>
+<circle class="chart-point" cx="251.0" cy="278.4" r="5"/>
+<circle class="chart-point" cx="125.1" cy="336.8" r="5"/>
+<circle class="chart-point" cx="83.2" cy="293.7" r="5"/>
+<circle class="chart-point" cx="125.1" cy="310.2" r="5"/>
+<circle class="chart-point" cx="125.1" cy="260.0" r="5"/>
+<circle class="chart-point" cx="125.1" cy="337.1" r="5"/>
+<circle class="chart-point" cx="83.2" cy="298.4" r="5"/>
+<text class="chart-axis" x="230.0" y="412">Actual goals scored</text>
+<text class="chart-axis chart-axis-y" x="16" y="204.0">Predicted goals scored</text>
+</svg>

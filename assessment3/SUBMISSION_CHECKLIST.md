@@ -31,10 +31,10 @@ Optional extras only if they help the rubric (not required).
 From the repo folder:
 
 ```
-python objective2.py
+python assignment3_final_code.py
 ```
 
-That is Assessment 3 only (no t-tests). It prints both OLS models and writes charts to `objective2_charts/`. The full file `wc2026_analytics.py` still has Objective 1 as well.
+That is the Assessment 3 Python file (no t-tests). Eight predictors per model, at most four shared. Charts go to `assignment3_charts/`.
 
 ## Marks risk
 

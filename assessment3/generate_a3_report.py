@@ -167,7 +167,7 @@ def build():
     )
     add_para(
         doc,
-        "We fit two ordinary least squares (OLS) linear regression models, each with eight explanatory variables. Model 2.1 predicts the goal difference of a match (team 1 goals minus team 2 goals; 104 rows). Model 2.2 predicts how many goals one team scores in one match (208 rows, two per match). Both models are trained on 80% of the rows and tested on the held-out 20% (random seed 42). Significance is assessed at α = 0.05. All wrangling, modelling and charts were done in Python (pandas, statsmodels, scikit-learn, matplotlib). Excel was used only to store the raw sheets.",
+        "We fit two ordinary least squares (OLS) linear regression models, each with exactly eight explanatory variables. The brief allows at most four of those variables to be shared. We share knockout, FIFA rank, squad value and rest days. Model 2.1 then uses age gap, title gap, host gap and same-confederation. Model 2.2 then uses prior World Cup appearances (own and opponent), a UEFA dummy, and days into the tournament from the published schedule. Model 2.1 predicts goal difference (104 rows). Model 2.2 predicts goals scored by one team (208 rows). Both use an 80/20 split (seed 42) and α = 0.05. All wrangling and charts are in assignment3_final_code.py. Excel only stores the raw sheets.",
         space_after=5,
         align="justify",
     )
@@ -175,7 +175,7 @@ def build():
     add_heading(doc, "2. Data, cleaning and feature engineering")
     add_para(
         doc,
-        "Three tables sit in fifa data.xlsx and are loaded by wc2026_analytics.py. matches (104 rows) has date, stage, teams, scores and attendance, compiled from the FIFA match centre, Wikipedia group and knockout pages, and worldcup.org.uk. teams (48 rows) has FIFA ranking at the 11 June 2026 freeze, confederation, host flag, previous World Cup titles, Transfermarkt squad value (EUR million) and squad average age. players (1,016 rows) is not used as a predictor here, but was used to check data quality: 294 player goals plus 14 own goals equal the official 308-goal tournament total, and 15 red cards match the official count.",
+        "Three tables sit in fifa data.xlsx and are loaded by assignment3_final_code.py. matches (104 rows) has date, stage, teams, scores and attendance, compiled from the FIFA match centre, Wikipedia group and knockout pages, and worldcup.org.uk. teams (48 rows) has FIFA ranking at the 11 June 2026 freeze, confederation, host flag, previous World Cup titles and appearances, Transfermarkt squad value (EUR million) and squad average age. players (1,016 rows) is not used as a predictor here, but was used to check data quality: 294 player goals plus 14 own goals equal the official 308-goal tournament total, and 15 red cards match the official count.",
         space_after=5,
         align="justify",
     )
@@ -187,7 +187,7 @@ def build():
     )
     add_para(
         doc,
-        "Model 2.1 features are all differences (team 1 minus team 2): FIFA rank, squad age, squad value, previous titles, host status (−1, 0 or 1), rest days, whether both teams share a confederation, and knockout. Rank is a position number, so a smaller rank is a stronger team; a negative rank_diff means team 1 is ranked better. Model 2.2 uses each side’s own rank and value, the opponent’s rank and value, squad age, a host dummy, rest days and knockout. No predictor in either model is built from the match that is being predicted.",
+        "Model 2.1 uses match-level differences (team 1 minus team 2): rank, value, rest and knockout (the four shared ideas), plus age, previous titles, host (−1, 0 or 1) and same confederation. A smaller FIFA rank number is a stronger team, so a negative rank_diff means team 1 is ranked better. Model 2.2 uses the team’s own rank, value, rest and knockout (the same four shared ideas), plus prior World Cup appearances for the team and the opponent, whether the team is UEFA, and days since 11 June 2026. That last variable comes from the published calendar, so it is known before kick-off. Age, titles, host and same-confederation are not reused in 2.2.",
         space_after=5,
         align="justify",
     )
@@ -225,7 +225,7 @@ def build():
     add_heading(doc, "4. Model 2.2 — goals scored by one team (n = 208)")
     add_para(
         doc,
-        "Target: goals scored by that team in that match. Two rows per match keep the two sides as separate observations. Training set 166 rows, test set 42 rows. Training R² = 0.290 (adjusted R² = 0.254). Test R² = 0.221, RMSE = 1.23 goals, MAE = 0.89 goals. The lower R² compared with Model 2.1 is expected: predicting one team’s exact tally (0, 1, 2, …) is noisier than predicting the gap between two sides. A 0–0 and a 2–2 look the same in Model 2.1 and different in Model 2.2.",
+        "Target: goals scored by that team in that match. Two rows per match. Training set 166 rows, test set 42 rows. Training R² = 0.264 (adjusted R² = 0.227). Test R² = 0.074, RMSE = 1.34 goals, MAE = 1.01 goals. Test fit is weak. That is expected once we are not allowed to reuse opponent rank or opponent value from Model 2.1, and because an exact tally is noisier than a goal difference. We still report it honestly rather than recycling extra shared predictors to inflate R².",
         space_after=4,
         align="justify",
     )
@@ -233,21 +233,21 @@ def build():
         doc,
         ["Variable", "Coef.", "p-value", "Reading in plain English"],
         [
-            ["Intercept", "+5.60", "0.064", "Baseline when other X = 0 (not a real match)"],
-            ["team_rank", "−0.0112", "0.067", "Better own rank (smaller number) → more goals (marginal)"],
-            ["opp_rank *", "+0.0128", "0.038", "Weaker opponent (higher rank number) → more goals"],
-            ["team_value *", "+0.0007", "0.035", "Richer own squad → more goals"],
-            ["opp_value", "−0.0003", "0.316", "Not significant"],
-            ["team_age", "−0.111", "0.251", "Not significant"],
-            ["is_host", "+0.666", "0.085", "Co-hosts trend to score more (marginal)"],
-            ["rest_days", "−0.225", "0.073", "Negative; likely a schedule confound, not “rest hurts”"],
-            ["knockout", "−0.287", "0.241", "Not significant"],
+            ["Intercept", "+3.14", "0.000", "Baseline when other X = 0"],
+            ["team_rank *", "−0.0133", "0.037", "Better own rank (smaller number) → more goals"],
+            ["team_value", "+0.0003", "0.535", "Not significant once rank is in"],
+            ["rest_days", "−0.207", "0.102", "Not significant"],
+            ["knockout", "−0.372", "0.313", "Not significant"],
+            ["team_appearances", "+0.015", "0.558", "Own prior WC appearances not significant"],
+            ["opp_appearances *", "−0.0645", "0.000", "More-experienced opponent → fewer goals"],
+            ["is_uefa", "+0.303", "0.241", "Not significant"],
+            ["days_into_tournament", "+0.008", "0.668", "Schedule day not significant"],
         ],
         [3.4, 2.0, 2.2, 10.2],
     )
     add_para(
         doc,
-        "The two significant drivers are opponent rank and own squad value. Own rank and host are close to the 5% line. Rest days is negative with p = 0.073; we do not claim that more rest reduces goals. First matches are filled at the median, and knockout scheduling sits in the same model, so this sign is more likely a timetable artefact.",
+        "Two coefficients are significant at 5%: own FIFA rank and the opponent’s prior World Cup appearances. A better-ranked team scores more. A more experienced opponent (more past tournaments) is associated with about 0.06 fewer goals per extra appearance. Squad value, UEFA membership and calendar day are not significant after those two are included.",
         space_after=4,
         align="justify",
     )
@@ -275,7 +275,7 @@ def build():
     add_heading(doc, "5. Diagnostics, comparison and limitations")
     add_para(
         doc,
-        "Multicollinearity was checked with variance inflation factors. The largest VIF excluding the intercept is 3.30 in Model 2.1 (value_diff) and 2.64 in Model 2.2. Both are well below the usual concern of 5 or 10, so the two significant variables in each model are not simply copies of each other. Shapiro–Wilk on training residuals: p = 0.937 for Model 2.1 (compatible with normality) and p = 0.034 for Model 2.2 (mild non-normality). That second result is not a surprise: goals are a small count (0, 1, 2, 3…). OLS was used because the brief asked for linear regression and because coefficients stay in “goals per unit of X” units. A Poisson or negative-binomial model would be a natural next step for Model 2.2.",
+        "Multicollinearity: largest VIF excluding the intercept is 3.30 in Model 2.1 and 3.44 in Model 2.2, both below 5. Shapiro–Wilk on training residuals: p = 0.937 for Model 2.1 (compatible with normality) and p = 0.017 for Model 2.2 (residuals not normal). Goals are a small count (0, 1, 2, 3…), so OLS is a blunt tool; the brief asked for linear regression, which is why we still use it. Poisson would be a natural next step for Model 2.2.",
         space_after=5,
         align="justify",
     )
@@ -289,7 +289,7 @@ def build():
     add_heading(doc, "6. Conclusion")
     add_para(
         doc,
-        "Before kick-off, the information that actually moves predicted outcomes in this tournament is FIFA ranking and squad market value. In Model 2.1 those two gaps are the only 5% significant drivers of goal difference; a billion-euro value edge is associated with about 1.7 extra net goals after rank is held fixed. In Model 2.2 a team scores more when it is richer and when its opponent is weaker on the ranking list. Host status, rest, age and previous titles do not survive once rank and value are in the model. The goal-difference model fits better than the team-goals model, which matches the idea that a relative margin is more predictable than an absolute count. We would next refit Model 2.2 as Poisson regression with the same eight pre-match predictors and compare residual plots and out-of-sample error.",
+        "Before kick-off, FIFA ranking is the most consistent signal. In Model 2.1, rank_diff and value_diff are the only 5% significant drivers of goal difference; a billion-euro value edge is about +1.7 net goals after rank is held fixed. In Model 2.2, after we keep only four shared ideas, a team scores more when it is better ranked and scores less against opponents with more World Cup history. Test R² is much higher for goal difference (0.31) than for a single team’s tally (0.07). That gap is partly the harder target, and partly the four-variable sharing rule, which stops us putting opponent rank into both models. We would next try a Poisson model for 2.2, still with the same eight pre-match predictors.",
         space_after=4,
         align="justify",
     )

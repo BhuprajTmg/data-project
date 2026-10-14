@@ -11,7 +11,7 @@ Needs `fifa data.xlsx` in this folder (sheets: matches, teams, players). Writes 
 Assessment 3 (Objective 2 only):
 
 ```
-python objective2.py
+python assignment3_final_code.py
 ```
 
-That fits the two pre-kickoff linear models and writes charts to `objective2_charts/`. Word report: `assessment3/HIT140_Assessment3_Group_Report.docx`.
+Two linear models, eight predictors each, at most four shared. Charts go to `assignment3_charts/`. Word report: `assessment3/HIT140_Assessment3_Group_Report.docx`.

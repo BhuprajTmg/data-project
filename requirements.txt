@@ -1,8 +1,6 @@
 pandas
 numpy
 openpyxl
-matplotlib
 scikit-learn
 statsmodels
 scipy
-python-docx

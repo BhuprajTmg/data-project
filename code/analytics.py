@@ -25,12 +25,10 @@ Run from the repository root after cleaning:
     python code/clean_data.py
     python code/analytics.py
 """
+import json
+from html import escape
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import pandas as pd
 import statsmodels.api as sm
 from scipy import stats
@@ -162,18 +160,82 @@ def fit_ols(data, features, target):
     }
 
 
-def save_chart(y_test, y_pred, xlabel, ylabel, title, path):
-    fig, ax = plt.subplots(figsize=(5.4, 5.4))
-    ax.scatter(y_test, y_pred, color="#24402C", alpha=0.75, s=36)
-    lo = min(float(y_test.min()), float(y_pred.min())) - 0.6
-    hi = max(float(y_test.max()), float(y_pred.max())) + 0.6
-    ax.plot([lo, hi], [lo, hi], color="#8C2F39", linestyle="--", linewidth=1.3)
-    ax.set_xlabel(xlabel, fontsize=11)
-    ax.set_ylabel(ylabel, fontsize=11)
-    ax.set_title(title, fontsize=12)
-    fig.tight_layout()
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+def scatter_svg(y_test, y_pred, xlabel, ylabel, title):
+    """Predicted vs actual chart as SVG (drawn by Python, styled in HTML/CSS)."""
+    xs = [float(v) for v in y_test]
+    ys = [float(v) for v in y_pred]
+    lo = min(xs + ys) - 0.6
+    hi = max(xs + ys) + 0.6
+    left, right, top, bottom = 58, 18, 36, 48
+    width, height = 420, 420
+    inner_w = width - left - right
+    inner_h = height - top - bottom
+
+    def tx(v):
+        return left + (v - lo) / (hi - lo) * inner_w
+
+    def ty(v):
+        return top + (1 - (v - lo) / (hi - lo)) * inner_h
+
+    ticks = []
+    step = 1 if hi - lo <= 8 else 2
+    start = int(lo) - 1
+    while start <= hi:
+        if lo <= start <= hi:
+            ticks.append(start)
+        start += step
+
+    parts = [
+        f'<svg class="chart-svg" viewBox="0 0 {width} {height}" role="img" aria-label="{escape(title)}">',
+        f'<text class="chart-title" x="{width / 2}" y="22">{escape(title)}</text>',
+        f'<rect class="chart-panel" x="{left}" y="{top}" width="{inner_w}" height="{inner_h}"/>',
+        f'<line class="chart-diag" x1="{tx(lo):.1f}" y1="{ty(lo):.1f}" x2="{tx(hi):.1f}" y2="{ty(hi):.1f}"/>',
+    ]
+    for t in ticks:
+        parts.append(
+            f'<line class="chart-grid" x1="{tx(t):.1f}" y1="{top}" x2="{tx(t):.1f}" y2="{top + inner_h}"/>'
+        )
+        parts.append(
+            f'<line class="chart-grid" x1="{left}" y1="{ty(t):.1f}" x2="{left + inner_w}" y2="{ty(t):.1f}"/>'
+        )
+        parts.append(f'<text class="chart-tick" x="{tx(t):.1f}" y="{height - 28}">{t}</text>')
+        parts.append(f'<text class="chart-tick chart-tick-y" x="{left - 8}" y="{ty(t):.1f}">{t}</text>')
+    for x, y in zip(xs, ys):
+        parts.append(f'<circle class="chart-point" cx="{tx(x):.1f}" cy="{ty(y):.1f}" r="5"/>')
+    parts.append(f'<text class="chart-axis" x="{left + inner_w / 2}" y="{height - 8}">{escape(xlabel)}</text>')
+    parts.append(
+        f'<text class="chart-axis chart-axis-y" x="16" y="{top + inner_h / 2}">{escape(ylabel)}</text>'
+    )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def result_payload(result):
+    m = result["model"]
+    vif_max = float(result["vif"].loc[result["vif"]["feature"] != "const", "VIF"].max())
+    coefs = []
+    for name in m.params.index:
+        p = float(m.pvalues[name])
+        coefs.append(
+            {
+                "name": "Intercept" if name == "const" else name,
+                "coef": float(m.params[name]),
+                "p": p,
+                "sig": name != "const" and p < ALPHA,
+            }
+        )
+    return {
+        "n_train": result["n_train"],
+        "n_test": result["n_test"],
+        "r2": result["r2"],
+        "adj_r2": result["adj_r2"],
+        "test_r2": result["test_r2"],
+        "rmse": result["rmse"],
+        "mae": result["mae"],
+        "vif_max": vif_max,
+        "shapiro_p": result["shapiro_p"],
+        "coefs": coefs,
+    }
 
 
 def print_model(title, result):
@@ -225,23 +287,36 @@ def main():
     print_model("Linear Regression 2.1  target = goal_diff  (104 matches)", r1)
     print_model("Linear Regression 2.2  target = goals scored  (208 rows)", r2)
 
+    svg1 = scatter_svg(
+        r1["y_test"], r1["y_pred"],
+        "Actual goal difference", "Predicted goal difference",
+        "Figure 1. Model 2.1 test set",
+    )
+    svg2 = scatter_svg(
+        r2["y_test"], r2["y_pred"],
+        "Actual goals scored", "Predicted goals scored",
+        "Figure 2. Model 2.2 test set",
+    )
     CHARTS.mkdir(exist_ok=True)
     figs = ROOT / "docs" / "figures"
     figs.mkdir(parents=True, exist_ok=True)
-    for folder in (CHARTS, figs):
-        save_chart(
-            r1["y_test"], r1["y_pred"],
-            "Actual goal difference", "Predicted goal difference",
-            "Figure 1. Model 2.1 test set: predicted vs actual",
-            folder / "reg1_pred.png",
-        )
-        save_chart(
-            r2["y_test"], r2["y_pred"],
-            "Actual goals scored", "Predicted goals scored",
-            "Figure 2. Model 2.2 test set: predicted vs actual",
-            folder / "reg2_pred.png",
-        )
-    print(f"\nCharts: {CHARTS}")
+    (CHARTS / "reg1_pred.svg").write_text(svg1, encoding="utf-8")
+    (CHARTS / "reg2_pred.svg").write_text(svg2, encoding="utf-8")
+    (figs / "reg1_pred.svg").write_text(svg1, encoding="utf-8")
+    (figs / "reg2_pred.svg").write_text(svg2, encoding="utf-8")
+    payload = {
+        "shared": SHARED,
+        "unique_21": UNIQUE_21,
+        "unique_22": UNIQUE_22,
+        "feats_21": FEATS_21,
+        "feats_22": FEATS_22,
+        "model_21": result_payload(r1),
+        "model_22": result_payload(r2),
+        "svg_21": svg1,
+        "svg_22": svg2,
+    }
+    (CLEANED / "model_results.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(f"\nCharts (SVG): {CHARTS}")
 
 
 if __name__ == "__main__":

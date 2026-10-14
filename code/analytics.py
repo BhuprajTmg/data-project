@@ -210,6 +210,27 @@ def scatter_svg(y_test, y_pred, xlabel, ylabel, title):
     return "\n".join(parts)
 
 
+def scatter_png(y_test, y_pred, xlabel, ylabel, title, path):
+    """PNG copy of the scatter so the Word report can embed the figure."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(5.2, 5.2))
+    ax.scatter(y_test, y_pred, color="#24402C", alpha=0.78, s=38, edgecolors="white", linewidths=0.4)
+    lo = min(float(min(y_test)), float(min(y_pred))) - 0.6
+    hi = max(float(max(y_test)), float(max(y_pred))) + 0.6
+    ax.plot([lo, hi], [lo, hi], color="#8C2F39", linestyle="--", linewidth=1.4)
+    ax.set_xlabel(xlabel, fontsize=11)
+    ax.set_ylabel(ylabel, fontsize=11)
+    ax.set_title(title, fontsize=12)
+    ax.grid(True, color="#d9e4f0", linewidth=0.8)
+    fig.tight_layout()
+    fig.savefig(path, dpi=160, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
 def result_payload(result):
     m = result["model"]
     vif_max = float(result["vif"].loc[result["vif"]["feature"] != "const", "VIF"].max())
@@ -304,6 +325,30 @@ def main():
     (CHARTS / "reg2_pred.svg").write_text(svg2, encoding="utf-8")
     (figs / "reg1_pred.svg").write_text(svg1, encoding="utf-8")
     (figs / "reg2_pred.svg").write_text(svg2, encoding="utf-8")
+    scatter_png(
+        r1["y_test"], r1["y_pred"],
+        "Actual goal difference", "Predicted goal difference",
+        "Figure 1. Model 2.1 test set",
+        figs / "reg1_pred.png",
+    )
+    scatter_png(
+        r2["y_test"], r2["y_pred"],
+        "Actual goals scored", "Predicted goals scored",
+        "Figure 2. Model 2.2 test set",
+        figs / "reg2_pred.png",
+    )
+    scatter_png(
+        r1["y_test"], r1["y_pred"],
+        "Actual goal difference", "Predicted goal difference",
+        "Figure 1. Model 2.1 test set",
+        CHARTS / "reg1_pred.png",
+    )
+    scatter_png(
+        r2["y_test"], r2["y_pred"],
+        "Actual goals scored", "Predicted goals scored",
+        "Figure 2. Model 2.2 test set",
+        CHARTS / "reg2_pred.png",
+    )
     payload = {
         "shared": SHARED,
         "unique_21": UNIQUE_21,

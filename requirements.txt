@@ -4,3 +4,5 @@ openpyxl
 scikit-learn
 statsmodels
 scipy
+matplotlib
+python-docx

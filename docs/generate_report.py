@@ -173,3 +173,11 @@ def build():
 
 if __name__ == "__main__":
     build()
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "generate_docx", Path(__file__).resolve().parent / "generate_docx.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    mod.build()

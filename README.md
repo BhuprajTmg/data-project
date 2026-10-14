@@ -20,7 +20,9 @@ python code/analytics.py
 python docs/generate_report.py
 ```
 
-Open `docs/HIT140_Assessment3_Group_Report.html` in a browser. Print to PDF if Learnline also wants a document file.
+Word file (this is the Learnline report): `docs/HIT140_Assessment3_Group_Report.docx`
+
+HTML copy: `docs/HIT140_Assessment3_Group_Report.html`
 
 ## Models
 

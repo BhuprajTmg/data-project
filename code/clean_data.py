@@ -11,6 +11,7 @@ Outputs (data/cleaned/):
     matches.csv
     teams.csv
     players.csv
+    team_roster.csv   (pre-match roster mix from age and position only)
     fifa_data_cleaned.xlsx
     cleaning_log.txt
 """
@@ -120,7 +121,28 @@ def clean_players(raw):
     return df
 
 
-def quality_checks(matches, teams, players):
+def build_roster(players):
+    """Pre-match squad mix. Uses only age and position, not this tournament's
+    minutes, goals or cards (those would leak the result).
+    """
+    g = players.groupby("team", sort=True)
+    out = pd.DataFrame(
+        {
+            "roster_size": g.size(),
+            "n_fw": g["position"].apply(lambda s: int((s == "FW").sum())),
+            "n_mf": g["position"].apply(lambda s: int((s == "MF").sum())),
+            "n_df": g["position"].apply(lambda s: int((s == "DF").sum())),
+            "n_gk": g["position"].apply(lambda s: int((s == "GK").sum())),
+            "youth_share": g["age"].apply(lambda s: float((s < 23).mean())),
+            "veteran_share": g["age"].apply(lambda s: float((s >= 32).mean())),
+            "age_spread": g["age"].std(ddof=1),
+        }
+    ).reset_index()
+    out["fwd_share"] = out["n_fw"] / out["roster_size"]
+    return out
+
+
+def quality_checks(matches, teams, players, roster):
     lines = []
     lines.append("HIT140 Assessment 3 — cleaning log")
     lines.append("")
@@ -147,6 +169,8 @@ def quality_checks(matches, teams, players):
     lines.append(f"Red cards (players table): {int(players['red_cards'].sum())}")
     lines.append(f"Knockout matches: {int(matches['knockout'].sum())}")
     lines.append(f"Group-stage matches: {int((matches['knockout'] == 0).sum())}")
+    lines.append(f"Roster rows: {len(roster)} (one per team)")
+    lines.append("Roster features use player age and position only (pre-match).")
     return "\n".join(lines) + "\n"
 
 
@@ -159,17 +183,20 @@ def main():
     matches = clean_matches(pd.read_excel(ORIGINAL, sheet_name="matches"))
     teams = clean_teams(pd.read_excel(ORIGINAL, sheet_name="teams"))
     players = clean_players(pd.read_excel(ORIGINAL, sheet_name="players"))
+    roster = build_roster(players)
 
     matches.to_csv(CLEANED / "matches.csv", index=False)
     teams.to_csv(CLEANED / "teams.csv", index=False)
     players.to_csv(CLEANED / "players.csv", index=False)
+    roster.to_csv(CLEANED / "team_roster.csv", index=False)
 
     with pd.ExcelWriter(CLEANED / "fifa_data_cleaned.xlsx", engine="openpyxl") as writer:
         matches.to_excel(writer, sheet_name="matches", index=False)
         teams.to_excel(writer, sheet_name="teams", index=False)
         players.to_excel(writer, sheet_name="players", index=False)
+        roster.to_excel(writer, sheet_name="team_roster", index=False)
 
-    log = quality_checks(matches, teams, players)
+    log = quality_checks(matches, teams, players, roster)
     (CLEANED / "cleaning_log.txt").write_text(log, encoding="utf-8")
     print(log)
     print(f"Wrote cleaned files to {CLEANED}")

@@ -14,3 +14,5 @@ Own goals implied: 14  (player goals + own goals should equal match goals)
 Red cards (players table): 15
 Knockout matches: 32
 Group-stage matches: 72
+Roster rows: 48 (one per team)
+Roster features use player age and position only (pre-match).

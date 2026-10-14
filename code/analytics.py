@@ -1,22 +1,29 @@
 #!/usr/bin/env python3
-"""HIT140 Assessment 3 — Objective 2 analytics
+"""HIT140 Assessment 3 — Objective 2 analytics (rebuilt models)
 
-Reads the cleaned tables produced by code/clean_data.py.
-Fits two OLS models with at most four shared explanatory ideas.
+The Assessment 2 regressions cannot be reused. Those models used FIFA rank,
+squad value, mean squad age, titles, host, rest days, same confederation and
+knockout. This file uses four *new* pre-match variables in each model.
+
+Lecturer note: at least four explanatory variables per model; two may be shared.
+
+Linear Regression 2.1  goal difference     (104 rows, one per match)
+Linear Regression 2.2  goals scored        (208 rows, two per match)
+
+Shared (2):
+    previous World Cup appearances, days into the tournament
+Unique to 2.1 (2):
+    youth_share_diff, age_spread_diff
+Unique to 2.2 (2):
+    opp_appearances, is_uefa
+
+Every predictor is known before kick-off.
+Tournament minutes, goals, cards, shots and possession are not used.
 
 Run from the repository root after cleaning:
 
     python code/clean_data.py
     python code/analytics.py
-
-Linear Regression 2.1  goal difference     (104 rows, one per match)
-Linear Regression 2.2  goals scored        (208 rows, two per match)
-
-Shared ideas (4): knockout, FIFA rank, squad value, rest days
-Unique to 2.1 (4): age_diff, titles_diff, host_diff, same_confed
-Unique to 2.2 (4): team_appearances, opp_appearances, is_uefa, days_into_tournament
-
-Every predictor is known before kick-off.
 """
 from pathlib import Path
 
@@ -37,35 +44,30 @@ CHARTS = ROOT / "charts"
 SEED = 42
 ALPHA = 0.05
 
-SHARED = ["knockout", "rank", "value", "rest"]
-UNIQUE_21 = ["age_diff", "titles_diff", "host_diff", "same_confed"]
-UNIQUE_22 = ["team_appearances", "opp_appearances", "is_uefa", "days_into_tournament"]
+# Banned (Assessment 2): rank, value, mean age, titles, host, rest, same_confed, knockout
+SHARED = ["appearances", "days_into_tournament"]
+UNIQUE_21 = ["youth_share_diff", "age_spread_diff"]
+UNIQUE_22 = ["opp_appearances", "is_uefa"]
 
 FEATS_21 = [
-    "rank_diff",
-    "value_diff",
-    "rest_diff",
-    "knockout",
-    "age_diff",
-    "titles_diff",
-    "host_diff",
-    "same_confed",
+    "appearances_diff",      # shared idea: previous World Cup appearances
+    "days_into_tournament",  # shared idea: published calendar
+    "youth_share_diff",      # unique to 2.1  (share of roster aged under 23)
+    "age_spread_diff",       # unique to 2.1  (std of roster ages)
 ]
 FEATS_22 = [
-    "team_rank",
-    "team_value",
-    "rest_days",
-    "knockout",
-    "team_appearances",
-    "opp_appearances",
-    "is_uefa",
-    "days_into_tournament",
+    "team_appearances",      # shared idea: previous World Cup appearances
+    "days_into_tournament",  # shared idea: published calendar
+    "opp_appearances",       # unique to 2.2
+    "is_uefa",               # unique to 2.2
 ]
 
 
 def load_cleaned():
     matches = pd.read_csv(CLEANED / "matches.csv", parse_dates=["date"])
     teams = pd.read_csv(CLEANED / "teams.csv")
+    roster = pd.read_csv(CLEANED / "team_roster.csv")
+    teams = teams.merge(roster, on="team")
     teams["is_uefa"] = (teams["confederation"] == "UEFA").astype(int)
     matches["goal_diff"] = matches["team1_goals"] - matches["team2_goals"]
     start = matches["date"].min()
@@ -73,59 +75,25 @@ def load_cleaned():
     return matches, teams
 
 
-def rest_days(matches):
-    """Days since that team's previous tournament match.
-
-    Opening matches have no previous date. Those 48 first games are filled
-    with the median rest observed later in the tournament (known from the
-    published schedule, not from the score).
-    """
-    rows = []
-    for _, row in matches.iterrows():
-        for side in ("team1", "team2"):
-            rows.append(
-                {"team": row[side], "match_number": row["match_number"], "date": row["date"]}
-            )
-    long = pd.DataFrame(rows).sort_values(["team", "date", "match_number"])
-    long["prev_date"] = long.groupby("team")["date"].shift(1)
-    long["rest_days"] = (long["date"] - long["prev_date"]).dt.days
-    long["rest_days"] = long["rest_days"].fillna(long["rest_days"].median())
-    return long[["team", "match_number", "rest_days"]]
-
-
 def build_21(matches, teams):
-    rest = rest_days(matches)
-    df = matches.merge(
-        rest.rename(columns={"team": "team1", "rest_days": "r1"}),
-        on=["match_number", "team1"],
-    )
-    df = df.merge(
-        rest.rename(columns={"team": "team2", "rest_days": "r2"}),
-        on=["match_number", "team2"],
-    )
     t1 = teams.add_suffix("_1").rename(columns={"team_1": "team1"})
     t2 = teams.add_suffix("_2").rename(columns={"team_2": "team2"})
-    df = df.merge(t1, on="team1").merge(t2, on="team2")
+    df = matches.merge(t1, on="team1").merge(t2, on="team2")
     return pd.DataFrame(
         {
             "match_id": df["match_number"],
             "team1": df["team1"],
             "team2": df["team2"],
             "goal_diff": df["goal_diff"],
-            "rank_diff": df["fifa_rank_pretournament_1"] - df["fifa_rank_pretournament_2"],
-            "value_diff": df["squad_market_value_eur_m_1"] - df["squad_market_value_eur_m_2"],
-            "rest_diff": df["r1"] - df["r2"],
-            "knockout": df["knockout"],
-            "age_diff": df["squad_avg_age_1"] - df["squad_avg_age_2"],
-            "titles_diff": df["prev_wc_titles_1"] - df["prev_wc_titles_2"],
-            "host_diff": df["host_1"] - df["host_2"],
-            "same_confed": (df["confederation_1"] == df["confederation_2"]).astype(int),
+            "appearances_diff": df["prev_wc_appearances_1"] - df["prev_wc_appearances_2"],
+            "days_into_tournament": df["days_into_tournament"],
+            "youth_share_diff": df["youth_share_1"] - df["youth_share_2"],
+            "age_spread_diff": df["age_spread_1"] - df["age_spread_2"],
         }
     )
 
 
 def build_22(matches, teams):
-    rest = rest_days(matches)
     rows = []
     for _, m in matches.iterrows():
         for team_col, opp_col, goals_col in (
@@ -138,12 +106,10 @@ def build_22(matches, teams):
                     "team": m[team_col],
                     "opponent": m[opp_col],
                     "goals": m[goals_col],
-                    "knockout": m["knockout"],
                     "days_into_tournament": m["days_into_tournament"],
                 }
             )
     df = pd.DataFrame(rows)
-    df = df.merge(rest, left_on=["team", "match_id"], right_on=["team", "match_number"])
     df = df.merge(teams, on="team")
     df = df.merge(
         teams.add_suffix("_opp").rename(columns={"team_opp": "opponent"}),
@@ -155,14 +121,10 @@ def build_22(matches, teams):
             "team": df["team"],
             "opponent": df["opponent"],
             "goals": df["goals"],
-            "team_rank": df["fifa_rank_pretournament"],
-            "team_value": df["squad_market_value_eur_m"],
-            "rest_days": df["rest_days"],
-            "knockout": df["knockout"],
             "team_appearances": df["prev_wc_appearances"],
+            "days_into_tournament": df["days_into_tournament"],
             "opp_appearances": df["prev_wc_appearances_opp"],
             "is_uefa": df["is_uefa"],
-            "days_into_tournament": df["days_into_tournament"],
         }
     )
 
@@ -238,18 +200,23 @@ def main():
     matches, teams = load_cleaned()
     assert len(matches) == 104, len(matches)
     assert len(teams) == 48, len(teams)
+    assert len(FEATS_21) == 4 and len(FEATS_22) == 4
+    assert len(SHARED) == 2
 
     d21 = build_21(matches, teams)
     d22 = build_22(matches, teams)
     assert len(d21) == 104, len(d21)
     assert len(d22) == 208, len(d22)
+    assert d21[FEATS_21].isna().sum().sum() == 0
+    assert d22[FEATS_22].isna().sum().sum() == 0
 
     CLEANED.mkdir(parents=True, exist_ok=True)
     d21.to_csv(CLEANED / "model21_goal_diff.csv", index=False)
     d22.to_csv(CLEANED / "model22_team_goals.csv", index=False)
 
-    print("HIT140 Assessment 3 — Objective 2")
-    print(f"Shared ideas (4): {SHARED}")
+    print("HIT140 Assessment 3 — Objective 2 (rebuilt; A2 variables not reused)")
+    print("Not used: rank, value, mean age, titles, host, rest, same_confed, knockout")
+    print(f"Shared ideas (2): {SHARED}")
     print(f"Unique to 2.1:    {UNIQUE_21}")
     print(f"Unique to 2.2:    {UNIQUE_22}")
 
@@ -261,31 +228,19 @@ def main():
     CHARTS.mkdir(exist_ok=True)
     figs = ROOT / "docs" / "figures"
     figs.mkdir(parents=True, exist_ok=True)
-    save_chart(
-        r1["y_test"], r1["y_pred"],
-        "Actual goal difference", "Predicted goal difference",
-        "Figure 1. Model 2.1 test set: predicted vs actual",
-        CHARTS / "reg1_pred.png",
-    )
-    save_chart(
-        r2["y_test"], r2["y_pred"],
-        "Actual goals scored", "Predicted goals scored",
-        "Figure 2. Model 2.2 test set: predicted vs actual",
-        CHARTS / "reg2_pred.png",
-    )
-    # copies for the Word report
-    save_chart(
-        r1["y_test"], r1["y_pred"],
-        "Actual goal difference", "Predicted goal difference",
-        "Figure 1. Model 2.1 test set: predicted vs actual",
-        figs / "reg1_pred.png",
-    )
-    save_chart(
-        r2["y_test"], r2["y_pred"],
-        "Actual goals scored", "Predicted goals scored",
-        "Figure 2. Model 2.2 test set: predicted vs actual",
-        figs / "reg2_pred.png",
-    )
+    for folder in (CHARTS, figs):
+        save_chart(
+            r1["y_test"], r1["y_pred"],
+            "Actual goal difference", "Predicted goal difference",
+            "Figure 1. Model 2.1 test set: predicted vs actual",
+            folder / "reg1_pred.png",
+        )
+        save_chart(
+            r2["y_test"], r2["y_pred"],
+            "Actual goals scored", "Predicted goals scored",
+            "Figure 2. Model 2.2 test set: predicted vs actual",
+            folder / "reg2_pred.png",
+        )
     print(f"\nCharts: {CHARTS}")
 
 

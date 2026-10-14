@@ -220,86 +220,74 @@ def build():
     )
     add_para(
         doc,
-        "We fit two ordinary least squares (OLS) linear regression models. Model 2.1 predicts the goal difference of a match (team 1 goals minus team 2 goals) using 104 rows and eight explanatory variables. Model 2.2 predicts the number of goals scored by one team in one match using 208 rows (two rows per match) and eight explanatory variables. The brief allows at most four of those variables to be shared. Every predictor is known before the referee starts the game. Shots, possession, cards in that match, and other in-match events are excluded because they would leak the result we are trying to predict.",
+        "The linear regression models shown in Assessment 2 cannot be reused. Those models used FIFA rank, squad market value, mean squad age, previous titles, host status, rest days, same confederation and knockout. For Assessment 3 we rebuilt both models with new explanatory variables. Following the lecturer’s note, each model has four explanatory variables, and two of those variables are shared.",
     )
     add_para(
         doc,
-        "All wrangling, modelling and figures were produced in Python. Microsoft Excel was used only to store the original raw tables. Both models use an 80/20 training/test split, random seed 42, and significance level α = 0.05.",
+        "Model 2.1 predicts the goal difference of a match (team 1 goals minus team 2 goals) using 104 rows. Model 2.2 predicts the number of goals scored by one team in one match using 208 rows (two rows per match). Every predictor is known before the referee starts the game. Shots, possession, cards in that match, tournament minutes and other in-match events are excluded. All wrangling, modelling and figures were produced in Python. Excel was used only to store the original raw tables. Both models use an 80/20 training/test split, random seed 42, and α = 0.05.",
     )
 
     add_h1(doc, "2. Data and cleaning")
     add_h2(doc, "2.1 Original data")
     add_para(
         doc,
-        "The original workbook is data/original/fifa_data_original.xlsx. It contains three sheets compiled from the FIFA match centre, Wikipedia, Transfermarkt and the FIFA ranking freeze of 11 June 2026. The matches sheet has 104 games (date, stage, teams, scores, attendance). The teams sheet has 48 national sides (ranking, confederation, host flag, previous titles, previous World Cup appearances, squad value in EUR million, average age). The players sheet has 1,016 players who featured. Players are not used as regression predictors. They are a quality check: 294 player goals plus 14 own goals equal the official 308-goal tournament total, and 15 red cards match the official count.",
+        "The original workbook is data/original/fifa_data_original.xlsx. It contains three sheets compiled from the FIFA match centre, Wikipedia, Transfermarkt and the FIFA ranking freeze of 11 June 2026. The matches sheet has 104 games. The teams sheet has 48 national sides. The players sheet has 1,016 players who featured. Player goals and cards from this tournament are used only as a quality check (294 player goals plus 14 own goals = 308 official goals; 15 red cards). They are not put into the regressions.",
     )
     add_h2(doc, "2.2 Cleaning steps")
     add_para(
         doc,
-        "Cleaning is in code/clean_data.py. Country names are mapped to one spelling so the three tables join (for example United States → USA, Turkey → Turkiye, Czech Republic → Czechia). Dates are parsed. Numeric fields are coerced. Duplicate match numbers, team names and player–team rows are dropped. The host flag is stored as 0/1. Knockout matches have no group, so the 32 blank group cells are labelled “Not applicable”. Penalty winner is blank unless the match went to penalties; those blanks are also labelled “Not applicable”. After cleaning there are no missing values in the three tables. The cleaned files are saved in data/cleaned/.",
+        "Cleaning is in code/clean_data.py. Country names are mapped to one spelling so the three tables join (for example United States → USA, Turkey → Turkiye). Dates are parsed. Numeric fields are coerced. Duplicate rows are dropped. The host flag is stored as 0/1. Blank group cells for knockout matches, and blank penalty-winner cells, are labelled “Not applicable”. After cleaning there are no missing values in matches, teams or players. The script also builds a roster table from player age and position only (not minutes or goals). Cleaned files are saved in data/cleaned/.",
     )
-    add_h2(doc, "2.3 Feature construction for the two models")
+    add_h2(doc, "2.3 New variables (four per model, two shared)")
     add_para(
         doc,
-        "A knockout flag is 1 if the stage is Round of 32 through the Final (32 matches) and 0 for the group stage (72 matches). Rest days are the number of days since that team’s previous tournament match. A first match has no previous date, so those 48 opening games are filled with the median rest from the rest of the tournament (5 days). That fill uses the published schedule, not the score.",
-    )
-    add_para(
-        doc,
-        "Shared variables (exactly four): knockout, FIFA rank, squad market value, and rest days. Unique to Model 2.1: age_diff, titles_diff, host_diff, same_confed. Unique to Model 2.2: team_appearances, opp_appearances, is_uefa, days_into_tournament (days since 11 June, from the calendar). Model 2.1 stores rank, value and rest as team-1-minus-team-2 differences. Model 2.2 stores them as the team’s own rank, value and rest. A smaller FIFA rank number means a stronger team.",
+        "Shared variables (2): previous World Cup appearances, and days into the tournament from the published calendar (11 June 2026 = day 0). Unique to Model 2.1: youth_share_diff (gap in the share of the roster aged under 23) and age_spread_diff (gap in the standard deviation of roster ages). Unique to Model 2.2: opp_appearances (opponent’s previous World Cup appearances) and is_uefa (the team is a UEFA side). Model 2.1 stores appearances, youth share and age spread as team-1-minus-team-2 differences. These are not the Assessment 2 variables: we do not use rank, value, mean squad age, titles, host, rest, same confederation or knockout.",
     )
 
     add_h1(doc, "3. Linear Regression 2.1 — goal difference")
     add_para(
         doc,
-        "The target is goal_diff. The sample is 104 matches, split into 83 training matches and 21 test matches. Training R² = 0.493 (adjusted R² = 0.438). On the held-out matches, test R² = 0.306, RMSE = 1.57 goals and MAE = 1.18 goals. The model describes about half of the training variation. Test fit is lower, which is expected with 21 held-out matches, but the predictions are still better than using the mean.",
+        "The target is goal_diff. The sample is 104 matches, split into 83 training matches and 21 test matches. Training R² = 0.321 (adjusted R² = 0.286). On the held-out matches, test R² = 0.339, RMSE = 1.53 goals and MAE = 1.10 goals. Test R² is close to training R², so the model is not only fitting noise in the training sample.",
     )
     add_para(doc, "Table 1. OLS coefficients for Model 2.1 (training sample). An asterisk marks p < 0.05.", size=11, italic=True, space_after=4, align="left")
     make_table(
         doc,
         ["Variable", "Coefficient", "p-value", "Interpretation"],
         [
-            ["Intercept", "+0.184", "0.383", "Not significant"],
-            ["rank_diff *", "−0.0232", "0.002", "Better FIFA rank for team 1 → more net goals"],
-            ["value_diff *", "+0.0017", "0.004", "EUR 1 billion extra squad value ≈ +1.7 net goals"],
-            ["rest_diff", "+0.172", "0.641", "Not significant"],
-            ["knockout", "−0.726", "0.097", "Knockouts look tighter (marginal only)"],
-            ["age_diff", "+0.113", "0.427", "Not significant (unique to 2.1)"],
-            ["titles_diff", "−0.132", "0.336", "Not significant (unique to 2.1)"],
-            ["host_diff", "+0.366", "0.494", "Not significant (unique to 2.1)"],
-            ["same_confed", "+0.218", "0.684", "Not significant (unique to 2.1)"],
+            ["Intercept", "+0.489", "0.200", "Not significant"],
+            ["appearances_diff *", "+0.1249", "0.000", "More prior World Cups than the opponent → more net goals"],
+            ["days_into_tournament", "−0.0271", "0.232", "Shared calendar variable; not significant"],
+            ["youth_share_diff", "+2.798", "0.111", "More under-23 players; not significant at 5%"],
+            ["age_spread_diff", "−0.175", "0.496", "Wider age mix; not significant"],
         ],
-        [3.4, 2.6, 2.2, 8.8],
+        [4.2, 2.4, 2.2, 8.2],
     )
     add_para(
         doc,
-        "Only rank_diff and value_diff are significant at 5%. The rank coefficient is negative because rank 1 is better than rank 20. If team 1 is stronger, rank_diff is negative; a negative coefficient then predicts a positive goal difference for team 1. Squad value has the expected sign: the richer squad is predicted to outscore the poorer one. Age, titles, host and same confederation add little once rank and value are already in the model. They are kept because the brief asked for eight thoughtful variables, not a search for small p-values.",
+        "Only appearances_diff is significant at 5%. Each extra previous World Cup appearance for team 1, relative to team 2, is associated with about +0.12 net goals. Youth share and age spread were included because they describe the shape of the squad, not the mean age used in Assessment 2. They are not significant once tournament experience is in the model. We keep all four variables because they were chosen before looking at p-values.",
     )
 
     add_h1(doc, "4. Linear Regression 2.2 — goals scored by one team")
     add_para(
         doc,
-        "The target is goals scored by that team in that match. The sample is 208 rows, split into 166 training rows and 42 test rows. Training R² = 0.264 (adjusted R² = 0.227). Test R² = 0.074, RMSE = 1.34 and MAE = 1.01. Test fit is weak. Two reasons explain this. First, a single team’s goal count is noisier than a match margin. Second, the sharing rule stops opponent rank and opponent value from appearing in this model. The weak test R² is reported rather than breaking the four-shared-variable limit.",
+        "The target is goals scored by that team in that match. The sample is 208 rows, split into 166 training rows and 42 test rows. Training R² = 0.213 (adjusted R² = 0.193). Test R² = 0.072, RMSE = 1.34 and MAE = 1.04. Test fit is weak. Counting one team’s goals is noisier than a match margin, and we are not allowed to recycle Assessment 2 predictors such as rank or value to inflate R².",
     )
     add_para(doc, "Table 2. OLS coefficients for Model 2.2 (training sample). An asterisk marks p < 0.05.", size=11, italic=True, space_after=4, align="left")
     make_table(
         doc,
         ["Variable", "Coefficient", "p-value", "Interpretation"],
         [
-            ["Intercept", "+3.14", "0.000", "Baseline when other X = 0"],
-            ["team_rank *", "−0.0133", "0.037", "Better own rank → more goals"],
-            ["team_value", "+0.0003", "0.535", "Not significant (shared idea: value)"],
-            ["rest_days", "−0.207", "0.102", "Not significant (shared idea: rest)"],
-            ["knockout", "−0.372", "0.313", "Not significant (shared idea: knockout)"],
-            ["team_appearances", "+0.015", "0.558", "Own prior World Cup appearances"],
-            ["opp_appearances *", "−0.0645", "0.000", "More World Cup history for the opponent → fewer goals"],
-            ["is_uefa", "+0.303", "0.241", "UEFA dummy, not significant"],
-            ["days_into_tournament", "+0.008", "0.668", "Schedule day, not significant"],
+            ["Intercept", "+1.342", "0.000", "Baseline when other X = 0"],
+            ["team_appearances *", "+0.0553", "0.002", "More own World Cup history → more goals"],
+            ["days_into_tournament", "+0.0059", "0.634", "Shared calendar variable; not significant"],
+            ["opp_appearances *", "−0.0654", "0.000", "More World Cup history for the opponent → fewer goals"],
+            ["is_uefa *", "+0.504", "0.023", "UEFA team scores about +0.50 goals, holding experience fixed"],
         ],
-        [3.4, 2.6, 2.2, 8.8],
+        [4.2, 2.4, 2.2, 8.2],
     )
     add_para(
         doc,
-        "Two coefficients are significant: team_rank and opp_appearances. A better-ranked team scores more. Facing an opponent with more previous World Cups is linked to about 0.06 fewer goals per extra appearance. Value, rest, knockout, UEFA membership and calendar day are not significant after those two variables are included.",
+        "Three coefficients are significant: team_appearances, opp_appearances and is_uefa. A team with more previous World Cups scores more. Facing a more experienced opponent is linked to about 0.07 fewer goals per extra appearance. UEFA sides score about half a goal more after those appearance counts are held fixed. Calendar day is not significant in either model.",
     )
 
     add_h1(doc, "5. Visualisation")
@@ -325,17 +313,17 @@ def build():
     add_h2(doc, "6.1 Diagnostics")
     add_para(
         doc,
-        "The largest variance inflation factor, excluding the intercept, is 3.30 in Model 2.1 and 3.44 in Model 2.2. Both are below 5, so multicollinearity is not a problem. Shapiro–Wilk tests on the training residuals give p = 0.937 for Model 2.1 (consistent with normal residuals) and p = 0.017 for Model 2.2 (residuals are not normal). Goals are small counts (0, 1, 2, 3…), so OLS is a blunt tool. The brief asked for linear regression, which is why OLS is used. A Poisson model would be a reasonable next step for Model 2.2.",
+        "The largest variance inflation factor, excluding the intercept, is 1.21 in Model 2.1 and 1.25 in Model 2.2. Both are well below 5, so multicollinearity is not a problem. Shapiro–Wilk tests on the training residuals give p = 0.802 for Model 2.1 (consistent with normal residuals) and p = 0.0006 for Model 2.2 (residuals are not normal). Goals are small counts (0, 1, 2, 3…), so OLS is a blunt tool. The brief asked for linear regression, which is why OLS is used. A Poisson model would be a reasonable next step for Model 2.2.",
     )
     add_h2(doc, "6.2 Limitations")
     add_para(
         doc,
-        "Five limitations should be kept in mind. First, the 208 rows in Model 2.2 are not independent, because two rows come from the same match; this can make standard errors look too small. Model 2.1 does not have that problem. Second, Transfermarkt squad values and average ages are a snapshot and can move with the pull date; rankings, scores and titles do not. Third, the test set for Model 2.1 is only 21 matches, so test R² = 0.306 is a rough check. Fourth, first-match rest is a median fill. Fifth, the eight variables were chosen in advance. Dropping the non-significant ones after seeing p-values would be p-hacking.",
+        "Four limitations should be kept in mind. First, the 208 rows in Model 2.2 are not independent, because two rows come from the same match. Second, the test set for Model 2.1 is only 21 matches, so test R² = 0.339 is a rough check even though it matches the training fit. Third, youth share and age spread come from the published roster; they describe squad mix, not how many minutes those players later received. Fourth, the four variables were chosen in advance. Dropping the non-significant ones after seeing p-values would be p-hacking.",
     )
     add_h2(doc, "6.3 Conclusion")
     add_para(
         doc,
-        "With only pre-match information, FIFA ranking is the most stable signal. In Model 2.1, the rank gap and the squad-value gap are the significant drivers of goal difference. In Model 2.2, own rank and the opponent’s World Cup history are the significant drivers of goals scored. The goal-difference model predicts held-out matches much better (test R² 0.31 versus 0.07). That gap is partly because a match margin is easier than a count, and partly because the four-variable sharing rule blocks opponent rank from appearing in both models.",
+        "After rebuilding the models without the Assessment 2 variables, previous World Cup experience is the stable pre-match signal. In Model 2.1, the appearance gap is the only 5% significant driver of goal difference. In Model 2.2, a team scores more when it has more World Cup history, scores less against more experienced opponents, and UEFA sides score about half a goal more. The goal-difference model predicts held-out matches much better (test R² 0.34 versus 0.07).",
         space_after=4,
     )
 

@@ -31,10 +31,10 @@ Optional extras only if they help the rubric (not required).
 From the repo folder:
 
 ```
-python wc2026_analytics.py
+python objective2.py
 ```
 
-That rebuilds `wc2026_report.html`. Objective 2 is Model 2.1 (goal difference, 104 matches) and Model 2.2 (team goals, 208 rows).
+That is Assessment 3 only (no t-tests). It prints both OLS models and writes charts to `objective2_charts/`. The full file `wc2026_analytics.py` still has Objective 1 as well.
 
 ## Marks risk
 
